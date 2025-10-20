@@ -29,7 +29,8 @@ def index_products():
         )
 
         # Generate embeddings locally
-        embedder = SentenceTransformer("all-MiniLM-L6-v2")
+        # Generate embeddings locally (lighter model for deployment)
+        embedder = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L3-v2")
         vectors = embedder.encode(df["search_text"].tolist(), show_progress_bar=True)
 
         # Initialize Pinecone client
@@ -58,7 +59,7 @@ def index_products():
 
         # Upload to Pinecone
         index.upsert(items)
-        print(f"✅ Indexed {len(items)} items to Pinecone")
+        print(f" Indexed {len(items)} items to Pinecone")
         return {"indexed": len(items)}
 
     except Exception as e:

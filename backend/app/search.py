@@ -19,8 +19,9 @@ load_dotenv(dotenv_path=env_path, override=True)
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX = os.getenv("PINECONE_INDEX")
 
-# Load embedder once
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
+# Load embedder once (lighter model for deployment)
+embedder = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L3-v2")
+
 
 def get_index():
     client = Pinecone(api_key=PINECONE_API_KEY)
