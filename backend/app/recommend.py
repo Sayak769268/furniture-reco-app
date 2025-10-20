@@ -9,8 +9,8 @@ from pinecone import Pinecone
 import os, json, re, ast
 from dotenv import load_dotenv
 from pathlib import Path
-
 from app.generate_description import ProductInput, generate_description_text
+
 
 router = APIRouter()
 
@@ -152,10 +152,15 @@ def recommend_chat(req: ChatRequest) -> Dict[str, Any]:
             material = md.get("material") or "premium materials"
 
             # description
-            pinput = ProductInput(
-                title=title, brand=brand, categories=categories, material=material, price=price_val or 0
-            )
-            gen_desc = generate_description_text(pinput)
+            product_input = ProductInput(
+                title=title,
+                brand=brand,
+                categories=categories,
+                material=material,
+                price=price_val or 0.0
+)
+            generated_desc = generate_description_text(product_input)
+
 
             recs.append({
                 "id": m.get("id"),
@@ -168,7 +173,7 @@ def recommend_chat(req: ChatRequest) -> Dict[str, Any]:
                 "color": md.get("color"),
                 "images": clean_images(md.get("images")),
                 "description": md.get("description"),
-                "generated_description": gen_desc
+                "generated_description": generated_desc
             })
             if len(recs) >= 6:
                 break

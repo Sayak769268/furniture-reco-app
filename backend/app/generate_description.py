@@ -7,7 +7,6 @@ import random
 
 router = APIRouter()
 
-# Input schema
 class ProductInput(BaseModel):
     title: str
     brand: str
@@ -15,22 +14,20 @@ class ProductInput(BaseModel):
     material: str
     price: float
 
-# Use small GPT-2 model
 generator = pipeline(
-    "text-generation",
-    model="distilgpt2",
-    max_new_tokens=60,
-    temperature=0.6,
-    top_p=0.85,
-    do_sample=True
+    "text2text-generation",
+    model="google/flan-t5-small",
+    max_new_tokens=80,
+    temperature=0.7,
+    top_p=0.9
 )
 
-# Prompt template — shorter and stricter
 prompt_template = PromptTemplate(
     input_variables=["title", "brand", "categories", "material", "price"],
     template=(
-        "Write two short, simple, and realistic sentences describing a furniture product. "
-        "Avoid repeating words. Keep it factual, clear, and natural.\n\n"
+        "You are a product copywriter. Write a short, engaging, and realistic product description for a furniture item. "
+        "Mention its material, brand, category, and price. Highlight its appeal for modern homes or offices.\n\n"
+        "Product Details:\n"
         "Title: {title}\n"
         "Brand: {brand}\n"
         "Category: {categories}\n"
@@ -40,52 +37,7 @@ prompt_template = PromptTemplate(
     ),
 )
 
-@router.post("/generate/description")
-def generate_description(product: ProductInput):
-    try:
-        prompt = prompt_template.format(
-            title=product.title,
-            brand=product.brand,
-            categories=product.categories,
-            material=product.material,
-            price=product.price,
-        )
-
-        result = generator(prompt, num_return_sequences=1)[0]["generated_text"]
-        text = result.replace(prompt, "").strip()
-
-        # Clean up output
-        text = re.sub(r"\s+", " ", text)
-        text = re.sub(r"\b(\w+)( \1\b)+", r"\1", text)  # remove repeated words
-        text = re.sub(r"[^A-Za-z0-9\s,.]", "", text)   # remove symbols
-        text = text.split(".")
-        sentences = [s.strip().capitalize() for s in text if 5 < len(s.strip()) < 120]
-
-        final = ". ".join(sentences[:2])
-        if not final.endswith("."):
-            final += "."
-
-        # Fallback if nonsense or repetition remains
-        if (
-            not final
-            or len(final.split()) < 6
-            or len(set(final.lower().split())) < len(final.split()) * 0.6
-        ):
-            templates = [
-                f"{product.title} by {product.brand} is crafted from {product.material} for durability and style. Perfect for modern {product.categories.lower()} spaces.",
-                f"The {product.brand} {product.title} combines elegant {product.material} with reliable quality. A great fit for any home or office.",
-                f"Designed by {product.brand}, this {product.categories.lower()} piece is made from {product.material} for a timeless and sturdy look."
-            ]
-            final = random.choice(templates)
-
-        return {"generated_description": final}
-
-    except Exception as e:
-        import traceback; traceback.print_exc()
-        return {"error": str(e)}
-
 def generate_description_text(product: ProductInput) -> str:
-    # Build prompt
     prompt = prompt_template.format(
         title=product.title,
         brand=product.brand,
@@ -94,31 +46,29 @@ def generate_description_text(product: ProductInput) -> str:
         price=product.price,
     )
 
-    # Generate text
     raw = generator(prompt, num_return_sequences=1)[0]["generated_text"]
     text = raw.replace(prompt, "").strip()
 
-    # Clean & trim
-    import re, random
     text = re.sub(r"\s+", " ", text)
-    text = re.sub(r"\b(\w+)( \1\b)+", r"\1", text)  # remove immediate repeats
-    text = re.sub(r"[^A-Za-z0-9\s,.]", "", text)
-    parts = [s.strip().capitalize() for s in text.split(".") if 5 < len(s.strip()) < 120]
+    text = re.sub(r"\b(\w+)( \1\b)+", r"\1", text)
+    text = re.sub(r"[^A-Za-z0-9\s,.₹]", "", text)
+    parts = [s.strip().capitalize() for s in text.split(".") if 5 < len(s.strip()) < 140]
 
     final = ". ".join(parts[:2])
     if not final.endswith("."):
         final += "."
 
-    # Fallback if weak or too repetitive
     if (
         not final
         or len(final.split()) < 6
         or len(set(final.lower().split())) < len(final.split()) * 0.6
     ):
         templates = [
-            f"{product.title} by {product.brand} is crafted from {product.material} for durability and style. Perfect for modern {product.categories.lower()} spaces.",
-            f"The {product.brand} {product.title} combines elegant {product.material} with reliable quality. A great fit for any home or office.",
-            f"Designed by {product.brand}, this {product.categories.lower()} piece is made from {product.material} for a timeless and sturdy look."
+            f"{product.title} by {product.brand} is crafted from premium {product.material}, offering both durability and elegance. Ideal for contemporary {product.categories.lower()} settings.",
+            f"Experience comfort and style with the {product.brand} {product.title}, made from high-quality {product.material}. A perfect addition to any modern home or office.",
+            f"Designed for lasting appeal, this {product.categories.lower()} piece by {product.brand} features sturdy {product.material} construction and a sleek finish.",
+            f"The {product.title} blends timeless design with reliable craftsmanship. Built from {product.material}, it's a standout piece from {product.brand}.",
+            f"Elevate your space with the {product.brand} {product.title} — a refined {product.categories.lower()} item made of durable {product.material}, priced at ₹{product.price}."
         ]
         final = random.choice(templates)
 

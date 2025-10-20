@@ -6,9 +6,8 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 import ast  # for safely parsing stringified lists
-
-# Import the reusable generator helper and input model
 from app.generate_description import ProductInput, generate_description_text
+
 
 router = APIRouter()
 
@@ -85,7 +84,6 @@ def search_products(
                 material=material,
                 price=price
             )
-
             generated_desc = generate_description_text(product_input)
 
             # Append final result
