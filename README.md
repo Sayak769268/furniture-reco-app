@@ -104,62 +104,95 @@ FURNITURE-RECO-APP/
 ├── package-lock.json
 ├── Procfile
 └── README.md
-🧪 Running Locally
-🐍 Backend Setup
-bash
-Copy code
-# 1️⃣ Create a virtual environment
+
+
+```
+## 🐍 Backend Setup
+
+**🔧 Step 1: Create a virtual environment**
+```bash
 python -m venv .venv
+```
+
+**💡 Activate the environment**
+```bash
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
 
-# 2️⃣ Install dependencies
+**📦 Step 2: Install dependencies**
+```bash
 pip install -r backend/requirements.txt
+```
 
-# 3️⃣ Run the FastAPI server
+**🚀 Step 3: Run the FastAPI server**
+```bash
 python -m uvicorn app.main:app --reload --port 8000
+```
 
-# 4️⃣ Open the API documentation
+**📜 Step 4: Open the API documentation**
+```
 http://localhost:8000/docs
-💻 Frontend Setup
-bash
-Copy code
-# 1️⃣ Navigate to the frontend folder
+```
+
+## 💻 Frontend Setup
+
+**Step 1: Navigate to the frontend folder**
+```bash
 cd furniture-frontend
+```
 
-# 2️⃣ Install dependencies
+**Step 2: Install dependencies**
+```bash
 npm install
+```
 
-# 3️⃣ Start the development server
+**Step 3: Start the development server**
+```bash
 npm run dev
+```
 
-# 4️⃣ Open the app in your browser
+**Step 4: Open the app in your browser**
+```
 http://localhost:5173
-📡 API Endpoints
-Method	Endpoint	Description
-POST	/search/query	Perform semantic search for products
-POST	/recommend/chat	Get ML-powered product recommendations
-GET	/analytics/overview	Retrieve product analytics summary
-POST	/generate/description	Generate AI-based product descriptions
+```
 
-📊 Example Analytics
-Top product categories and brand insights
+---
 
-Price distribution and material analysis
+## 📡 API Endpoints
 
-Embedding similarity heatmaps
+| Method | Endpoint                 | Description                             |
+|--------|--------------------------|-----------------------------------------|
+| POST   | `/search/query`          | Perform semantic search for products    |
+| POST   | `/recommend/chat`        | Get ML-powered product recommendations  |
+| GET    | `/analytics/overview`    | Retrieve product analytics summary      |
+| POST   | `/generate/description`  | Generate AI-based product descriptions  |
 
-Explore more in Data_Analytics.ipynb
+---
 
-🧠 Future Enhancements
-Add user authentication & personalized recommendations
+## 📊 Example Analytics
 
-Integrate real-time product inventory APIs
+- Top product categories and brand insights  
+- Price distribution and material analysis  
+- Embedding similarity heatmaps  
+- Explore more in `Data_Analytics.ipynb`
 
-Improve recommendation feedback loops
+---
 
-Containerized deployment (Docker + CI/CD pipeline)
+## 🧠 Future Enhancements
 
-🪪 License
-This project is open-source under the MIT License.
+- Add user authentication & personalized recommendations  
+- Integrate real-time product inventory APIs  
+- Improve recommendation feedback loops  
+- Containerized deployment (Docker + CI/CD pipeline)
 
-🌟 Made with ❤️ by Sayak Mukherjee
+---
+
+## 🪪 License
+
+This project is open-source under the **MIT License**.
+
+---
+
+## 🌟 Made with ❤️ by Sayak Mukherjee
+
+
